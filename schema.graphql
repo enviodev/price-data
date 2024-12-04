@@ -1,0 +1,23 @@
+type OraclePoolPrice {
+  id: ID!
+  value: BigInt!
+  timestamp: BigInt!
+  block: Int!
+}
+
+type UniswapV3PoolPrice {
+  id: ID!
+  sqrtPriceX96: BigInt!
+  timestamp: Int!
+  block: Int!
+}
+
+type TVLDollars {
+  id: ID!
+  timestamp: Int!
+  block: Int!
+  oraclePrice: BigInt!
+  poolPrice: BigInt!
+  coinGeckoPrice: BigInt!
+}
+
