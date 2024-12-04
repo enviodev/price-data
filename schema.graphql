@@ -18,6 +18,7 @@ type TVLDollars {
   block: Int!
   oraclePrice: BigInt!
   poolPrice: BigInt!
-  coinGeckoPrice: BigInt!
+  ethDepositedUsd: Float!
+  offChainPrice: Float!
 }
 
