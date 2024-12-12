@@ -12,13 +12,16 @@ type UniswapV3PoolPrice {
   block: Int!
 }
 
-type TVLDollars {
+type EthDeposited {
   id: ID!
   timestamp: Int!
   block: Int!
   oraclePrice: BigInt!
   poolPrice: BigInt!
-  ethDepositedUsd: Float!
+  ethDepositedUsdPool: Float!
+  ethDepositedUsdOffchain: Float!
+  usdDeposited: Float!
   offChainPrice: Float!
+  txHash: String!
 }
 

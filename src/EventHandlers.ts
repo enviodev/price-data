@@ -6,9 +6,9 @@ import {
   OraclePoolPrice,
   UniswapV3Pool,
   UniswapV3PoolPrice,
-  TVLDollars,
+  EthDeposited,
 } from "generated";
-import fetchEthPrice from "./request";
+import fetchEthPriceFromUnix from "./request";
 
 let latestOraclePrice = 0n;
 let latestPoolPrice = 0n;
@@ -21,7 +21,7 @@ Api3ServerV1.UpdatedBeaconSetWithBeacons.handler(async ({ event, context }) => {
     block: event.block.number,
   };
 
-  latestOraclePrice = event.params.value / BigInt(10**18);
+  latestOraclePrice = event.params.value / BigInt(10 ** 18);
 
   context.OraclePoolPrice.set(entity);
 });
@@ -41,24 +41,24 @@ UniswapV3Pool.Swap.handler(async ({ event, context }) => {
 
 UniswapV3Pool.Mint.handler(async ({ event, context }) => {
 
-  let offChainPrice=0;
-  if (event.block.number > 11000000) {
-    offChainPrice = await fetchEthPrice(event.block.number);
-    console.log(offChainPrice);
-  }
+  const offChainPrice = await fetchEthPriceFromUnix(event.block.timestamp);
 
-  const ethDepositedUsd = latestPoolPrice * event.params.amount1 / BigInt(10**18);
+  const ethDepositedUsdPool = latestPoolPrice * event.params.amount1 / BigInt(10 ** 18);
+  const ethDepositedUsdOffchain = BigInt(offChainPrice.toFixed(0)) * event.params.amount1 / BigInt(10 ** 18);
 
-  const TVLDollars: TVLDollars = {
+  const EthDeposited: EthDeposited = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
     timestamp: event.block.timestamp,
     block: event.block.number,
     oraclePrice: latestOraclePrice,
     poolPrice: latestPoolPrice,
     offChainPrice: Number(offChainPrice.toFixed(2)),
-    ethDepositedUsd: Number(ethDepositedUsd),
+    ethDepositedUsdPool: Number(ethDepositedUsdPool),
+    ethDepositedUsdOffchain: Number(ethDepositedUsdOffchain),
+    usdDeposited: Number(event.params.amount0/BigInt(10**18)),
+    txHash: event.transaction.hash,
   }
 
 
-  context.TVLDollars.set(TVLDollars);
+  context.EthDeposited.set(EthDeposited);
 });
