@@ -16,12 +16,13 @@ type EthDeposited {
   id: ID!
   timestamp: Int!
   block: Int!
-  oraclePrice: BigInt!
-  poolPrice: BigInt!
-  ethDepositedUsdPool: Float!
-  ethDepositedUsdOffchain: Float!
-  usdDeposited: Float!
+  oraclePrice: Float!
+  poolPrice: Float!
   offChainPrice: Float!
+  offchainOracleDiff: Float!
+  depositedPool: Float!
+  depositedOffchain: Float!
+  depositedOrcale: Float!
   txHash: String!
 }
 
