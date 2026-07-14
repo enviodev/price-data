@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=./node_modules/envio/evm.schema.json
 name: envio-indexer
 rollback_on_reorg: false
-networks:
+chains:
 - id: 81457
   start_block: 11000000
   contracts:

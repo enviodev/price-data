@@ -1,8 +1,5 @@
 import assert from "assert";
-import { 
-  TestHelpers,
-  Api3ServerV1_UpdatedBeaconSetWithBeacons
-} from "generated";
+import { TestHelpers, Api3ServerV1_UpdatedBeaconSetWithBeacons } from "envio";
 const { MockDb, Api3ServerV1 } = TestHelpers;
 
 describe("Api3ServerV1 contract UpdatedBeaconSetWithBeacons event tests", () => {

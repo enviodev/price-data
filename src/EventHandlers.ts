@@ -1,19 +1,15 @@
 /*
  * Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features
  */
-import {
-  Api3ServerV1,
-  OraclePoolPrice,
-  UniswapV3Pool,
-  UniswapV3PoolPrice,
-  EthDeposited,
-} from "generated";
+import { indexer, Api3ServerV1, OraclePoolPrice, UniswapV3Pool, UniswapV3PoolPrice, EthDeposited } from "envio";
 import fetchEthPriceFromUnix from "./request";
 
 let latestOraclePrice = 0;
 let latestPoolPrice = 0;
 
-Api3ServerV1.UpdatedBeaconSetWithBeacons.handler(async ({ event, context }) => {
+indexer.onEvent(
+  { contract: "Api3ServerV1", event: "UpdatedBeaconSetWithBeacons" },
+  async ({ event, context }) => {
   // Filter out the beacon set for the ETH/USD price
   if (
     event.params.beaconSetId !=
@@ -32,9 +28,12 @@ Api3ServerV1.UpdatedBeaconSetWithBeacons.handler(async ({ event, context }) => {
   latestOraclePrice = Number(event.params.value) / Number(10 ** 18);
 
   context.OraclePoolPrice.set(entity);
-});
+}
+);
 
-UniswapV3Pool.Swap.handler(async ({ event, context }) => {
+indexer.onEvent(
+  { contract: "UniswapV3Pool", event: "Swap" },
+  async ({ event, context }) => {
   const entity: UniswapV3PoolPrice = {
     id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
     sqrtPriceX96: event.params.sqrtPriceX96,
@@ -48,9 +47,12 @@ UniswapV3Pool.Swap.handler(async ({ event, context }) => {
   );
 
   context.UniswapV3PoolPrice.set(entity);
-});
+}
+);
 
-UniswapV3Pool.Mint.handler(async ({ event, context }) => {
+indexer.onEvent(
+  { contract: "UniswapV3Pool", event: "Mint" },
+  async ({ event, context }) => {
   const offChainPrice = await fetchEthPriceFromUnix(event.block.timestamp);
 
   const ethDepositedUsdPool =
@@ -79,7 +81,8 @@ UniswapV3Pool.Mint.handler(async ({ event, context }) => {
   };
 
   context.EthDeposited.set(EthDeposited);
-});
+}
+);
 
 function round(value: number) {
   return Math.round(value * 100) / 100;
